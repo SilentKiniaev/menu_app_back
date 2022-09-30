@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model MenuItem {
+  id            Int       @id @default(autoincrement())
+  title         String
+  // categories    MenuItemsOnCategories[]  
+  category      Category  @relation(fields: [categoryId], references: [id])
+  categoryId    Int
+  spicy         Boolean   @default(false)
+  weight        Int
+  protein       Int
+  fats          Int
+  carbs         Int
+  price         Float     @default(0.0)
+  description   String?
+  imageUrl      String    @default("")
+  images        Image[]
+  createdAt     DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt     DateTime  @updatedAt @db.Timestamptz(3)
+}
+
+model Category {
+  id            Int       @id @default(autoincrement())
+  title         String
+  menuitems  MenuItem[]
+  // menuItems  MenuItemsOnCategories[]
+}
+
+model Image {
+  id            Int       @id @default(autoincrement())
+  url           String
+  menuItem      MenuItem  @relation(fields: [menuItemId], references: [id])
+  menuItemId    Int
+  createdAt     DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt     DateTime  @updatedAt @db.Timestamptz(3)
+}
+
+// model MenuItemsOnCategories {
+//   menuItem   MenuItem     @relation(fields: [menuItemId], references: [id])
+//   menuItemId Int 
+//   category       Category @relation(fields: [categoryId], references: [id])
+//   categoryId     Int 
+//   assignedAt     DateTime @default(now())
+
+//   @@id([menuItemId, categoryId])
+// }
